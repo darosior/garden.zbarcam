@@ -15,7 +15,7 @@ SYSTEM_DEPENDENCIES= \
 	wget
 OS=$(shell lsb_release -si)
 PYTHON_MAJOR_VERSION=3
-PYTHON_MINOR_VERSION=6
+PYTHON_MINOR_VERSION=$(shell python -c 'import sys;print(sys.version_info[1])')
 PYTHON_VERSION=$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)
 PYTHON_WITH_VERSION=python$(PYTHON_VERSION)
 # python3 has a "m" suffix for both include path and library
@@ -25,7 +25,7 @@ OPENCV_VERSION=4.0.1
 OPENCV_ARCHIVE=$(OPENCV_BASENAME).tar.gz
 OPENCV_BASENAME=opencv-$(OPENCV_VERSION)
 OPENCV_BUILD_LIB_DIR=$(OPENCV_BASENAME)/build/lib
-OPENCV_BUILD=$(OPENCV_BUILD_LIB_DIR)/python$(PYTHON_MAJOR_VERSION)/cv2*.so
+OPENCV_BUILD=$(OPENCV_BUILD_LIB_DIR)/cv2*.so
 OPENCV_DEPLOY=$(SITE_PACKAGES_DIR)/cv2*.so
 NPROC=`grep -c '^processor' /proc/cpuinfo`
 ifeq ($(PYTHON_MAJOR_VERSION), 3)
@@ -38,7 +38,7 @@ all: system_dependencies virtualenv opencv
 venv:
 	test -d venv || virtualenv -p python$(PYTHON_MAJOR_VERSION) venv
 	. venv/bin/activate
-	$(PIP) install Cython==0.26.1
+	$(PIP) install Cython==0.28.2
 	$(PIP) install -r requirements/requirements.txt
 	$(GARDEN) install xcamera
 
@@ -97,6 +97,7 @@ $(OPENCV_DEPLOY): $(OPENCV_BUILD) virtualenv
 	cp $(OPENCV_BUILD) $(SITE_PACKAGES_DIR)
 
 opencv: $(OPENCV_DEPLOY)
+	$(PIP) install opencv-python
 
 clean:
 	rm -rf $(VENV_NAME) .tox/ $(OPENCV_BASENAME)
