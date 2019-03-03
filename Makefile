@@ -14,8 +14,8 @@ SYSTEM_DEPENDENCIES= \
 	virtualenv \
 	wget
 OS=$(shell lsb_release -si)
-PYTHON_MAJOR_VERSION=3
-PYTHON_MINOR_VERSION=6
+PYTHON_MAJOR_VERSION=$(shell python -c 'import sys;print(sys.version_info[0])')
+PYTHON_MINOR_VERSION=$(shell python -c 'import sys;print(sys.version_info[1])')
 PYTHON_VERSION=$(PYTHON_MAJOR_VERSION).$(PYTHON_MINOR_VERSION)
 PYTHON_WITH_VERSION=python$(PYTHON_VERSION)
 # python3 has a "m" suffix for both include path and library
