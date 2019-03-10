@@ -1,4 +1,4 @@
-VENV_NAME=venv
+VENV_NAME=$(shell if test "$$VIRTUAL_ENV" != "";then echo "$$VIRTUAL_ENV";else echo "venv";fi)
 PIP=$(VENV_NAME)/bin/pip
 TOX=`which tox`
 GARDEN=$(VENV_NAME)/bin/garden
@@ -11,7 +11,7 @@ SYSTEM_DEPENDENCIES= \
 	libsdl2-dev \
 	libzbar-dev \
 	tox \
-	virtualenv \
+	python3-venv \
 	wget
 OS=$(shell lsb_release -si)
 PYTHON_MAJOR_VERSION=3
@@ -36,8 +36,8 @@ endif
 all: system_dependencies virtualenv opencv
 
 venv:
-	test -d venv || virtualenv -p python$(PYTHON_MAJOR_VERSION) venv
-	. venv/bin/activate
+	test "$$VIRTUAL_ENV" != "" || python$(PYTHON_MAJOR_VERSION) -m venv venv 
+	. $(VENV_NAME)/bin/activate
 	$(PIP) install Cython==0.28.6
 	$(PIP) install -r requirements/requirements.txt
 	$(GARDEN) install xcamera
